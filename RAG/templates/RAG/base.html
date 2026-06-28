@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Responsive Left Sidebar</title>
+    <style>
+        /* Reset default browser spacing */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f6f9;
+            color: #333;
+        }
+
+        /* Layout Structure */
+        .wrapper {
+            display: flex;
+        }
+
+        /* Sidebar Styling */
+        .sidebar {
+            width: 260px;
+            height: 100vh;
+            background-color: #1a202c;
+            color: #fff;
+            position: fixed;
+            left: 0;
+            top: 0;
+            padding: 20px 0;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        .sidebar .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0 25px 20px 25px;
+            font-size: 22px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            border-bottom: 1px solid #2d3748;
+        }
+
+        .sidebar .logo-icon {
+            width: 34px;
+            height: 40px;
+            display: grid;
+            place-items: center;
+            background: #2d3748;
+            border-radius: 10px;
+            color: #63b3ed;
+            font-size: 18px;
+            border: 1px solid #4a5568;
+        }
+
+        .sidebar .logo-text {
+            display: block;
+            font-size: 13px;
+            line-height: 1.3;
+            color: #a0aec0;
+            font-weight: 500;
+        }
+
+        .sidebar ul {
+            list-style: none;
+            margin-top: 20px;
+        }
+
+        .sidebar ul li a {
+            display: block;
+            padding: 15px 25px;
+            color: #a0aec0;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        /* Hover and Active link states */
+        .sidebar ul li a:hover,
+        .sidebar ul li a.active {
+            color: #ffffff;
+            background-color: #2d3748;
+            border-left: 4px solid #3182ce;
+            padding-left: 21px; /* Adjust padding to keep text aligned with border change */
+        }
+
+        .sidebar .upload-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: calc(100% - 50px);
+            margin: 18px 25px;
+            padding: 12px 16px;
+            background-color: #3182ce;
+            color: #ffffff;
+            border: none;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .sidebar .upload-button:hover {
+            background-color: #2b6cb0;
+        }
+
+        .sidebar .selected-file {
+            margin-top: 12px;
+            padding: 10px 15px;
+            border-radius: 12px;
+            background-color: #2d3748;
+            color: #cbd5e1;
+            font-size: 14px;
+            line-height: 1.4;
+            word-break: break-all;
+        }
+
+        .recent-documents {
+            margin-top: 24px;
+            padding: 0 25px;
+        }
+
+        .recent-documents h3 {
+            font-size: 13px;
+            text-transform: uppercase;
+            color: #718096;
+            letter-spacing: 0.08em;
+            margin-bottom: 14px;
+        }
+
+        .recent-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px 16px;
+            background-color: #191f2c;
+            border-radius: 16px;
+            margin-bottom: 12px;
+            text-decoration: none;
+            color: #e2e8f0;
+            transition: background-color 0.2s ease;
+            overflow: hidden;
+        }
+
+        .recent-item:hover,
+        .recent-item.active {
+            background-color: #2a3a5a;
+        }
+
+        .recent-item .doc-icon {
+            width: 38px;
+            height: 38px;
+            display: grid;
+            place-items: center;
+            background: #2d3748;
+            border-radius: 12px;
+            color: #63b3ed;
+            font-size: 18px;
+        }
+
+        .recent-item .doc-info {
+            display: grid;
+            gap: 4px;
+            font-size: 14px;
+            line-height: 1.3;
+            min-width: 0; /* allow flex child to shrink */
+        }
+
+        .recent-item .doc-info strong {
+            font-weight: 600;
+            color: #f8fafc;
+            display: block;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .recent-item .doc-info span {
+            color: #94a3b8;
+            font-size: 13px;
+        }
+
+        .main-content {
+            margin-left: 260px; /* Must equal the sidebar width */
+            padding: 20px 40px 40px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .main-content .page-header {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            padding: 0 40px 10px;
+            margin-bottom: 24px;
+            border-bottom: 1px solid #e2e8f0;
+            width: calc(100% + 80px);
+            margin-left: -40px;
+            margin-right: -40px;
+        }
+
+        .chat-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 0 12px;
+            border-bottom: 1px solid #e2e8f0;
+            margin-bottom: 28px;
+        }
+
+        .file-summary {
+            display: grid;
+            gap: 6px;
+        }
+
+        .chat-area {
+            flex: 1;
+            overflow-y: auto;
+            padding-bottom: 16px;
+        }
+        .chat-body {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between; /* keep composer at bottom when messages are few */
+            min-height: 320px; /* ensure some vertical space for the chat area */
+        }
+
+        .messages {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            margin-bottom: 0;
+            min-height: 180px;
+            padding-right: 8px;
+        }
+
+        .composer {
+            position: sticky;
+            bottom: 0;
+            z-index: 1;
+            background: transparent;
+            margin-top: auto;
+            padding-top: 14px;
+        }
+
+        .message {
+            max-width: 72%;
+            padding: 18px 22px;
+            border-radius: 24px;
+            line-height: 1.7;
+            font-size: 15px;
+            box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+            word-break: break-word;
+        }
+
+        .message-assistant {
+            align-self: flex-start;
+            background-color: #ffffff;
+            color: #1f2937;
+        }
+
+        .message-user {
+            align-self: flex-end;
+            background-color: #eef2ff;
+            color: #1e3a8a;
+        }
+
+        .message-loading {
+            align-self: flex-start;
+            background-color: #eff6ff;
+            color: #475569;
+            font-style: italic;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            animation: pulse 1.6s ease-in-out infinite;
+        }
+
+        .loading-dots {
+            display: inline-flex;
+            gap: 4px;
+        }
+
+        .loading-dots span {
+            width: 6px;
+            height: 6px;
+            border-radius: 999px;
+            background-color: currentColor;
+            opacity: 0.25;
+            animation: loading-dot 1s infinite ease-in-out;
+        }
+
+        .loading-dots span:nth-child(1) {
+            animation-delay: 0s;
+        }
+
+        .loading-dots span:nth-child(2) {
+            animation-delay: 0.15s;
+        }
+
+        .loading-dots span:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+
+        @keyframes loading-dot {
+            0%, 20% { opacity: 0.25; transform: translateY(0); }
+            50% { opacity: 1; transform: translateY(-2px); }
+            100% { opacity: 0.25; transform: translateY(0); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-1px); }
+        }
+
+        .file-summary .file-name {
+            font-size: 16px;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .file-summary .file-meta {
+            font-size: 14px;
+            color: #64748b;
+        }
+
+        .messages {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            margin-bottom: 28px;
+        }
+
+        .message {
+            max-width: 63%;
+            padding: 16px 20px;
+            border-radius: 24px;
+            line-height: 1.7;
+            font-size: 15px;
+            box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+        }
+
+        .message-assistant {
+            align-self: flex-start;
+            background-color: #ffffff;
+            color: #1f2937;
+        }
+
+        .message-user {
+            align-self: flex-end;
+            background-color: #e5edff;
+            color: #1e3a8a;
+        }
+
+        .message .source {
+            margin-top: 12px;
+            font-size: 13px;
+            color: #64748b;
+            border-top: 1px solid #f1f5f9;
+            padding-top: 12px;
+        }
+
+        .composer {
+            display: flex;
+            gap: 12px;
+            padding: 18px 20px;
+            background-color: #ffffff;
+            border-radius: 24px;
+            box-shadow: 0 16px 40px rgba(15, 23, 42, 0.08);
+            align-items: center;
+        }
+
+        .composer input {
+            flex: 1;
+            border: none;
+            outline: none;
+            font-size: 15px;
+            color: #334155;
+            background: transparent;
+            min-width: 0;
+        }
+
+        .composer input::placeholder {
+            color: #94a3b8;
+        }
+
+        .composer button {
+            background-color: #4f46e5;
+            border: none;
+            padding: 14px 18px;
+            border-radius: 16px;
+            color: #ffffff;
+            font-size: 16px;
+            cursor: pointer;
+            box-shadow: 0 10px 20px rgba(79, 70, 229, 0.18);
+        }
+
+        .main-content h1,
+        .main-content h2 {
+            margin-top: 0;
+            margin-bottom: 20px;
+            color: #2d3748;
+        }
+
+        .main-content p {
+            line-height: 1.6;
+            color: #4a5568;
+        }
+
+        #mainSubtitle {
+            margin-top: -20px;
+        }
+
+        .card {
+            background-color: #ffffff;
+            border-radius: 24px;
+            padding: 28px 32px;
+            box-shadow: 0 20px 50px rgba(15, 23, 42, 0.08);
+        }
+
+        .card h2 {
+            margin: 0 0 8px;
+            font-size: 1.8rem;
+            color: #1f2937;
+        }
+
+        .card p {
+            margin: 0;
+            color: #475569;
+            font-size: 1rem;
+        }
+
+        /* Responsive Breakpoint for Mobile Devices */
+        @media (max-width: 768px) {
+            .wrapper {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                position: relative;
+                width: 100%;
+                height: auto;
+                padding: 15px 0;
+            }
+
+            .sidebar .logo {
+                padding: 0 20px 10px 20px;
+                border-bottom: none;
+            }
+
+            .sidebar ul {
+                display: flex;
+                flex-wrap: wrap;
+                margin-top: 0;
+                padding: 0 10px;
+            }
+
+            .sidebar ul li {
+                flex: 1 1 auto;
+            }
+
+            .sidebar ul li a {
+                padding: 10px 15px;
+                text-align: center;
+                font-size: 14px;
+            }
+
+            .sidebar ul li a:hover,
+            .sidebar ul li a.active {
+                border-left: none;
+                border-bottom: 3px solid #3182ce;
+                padding-left: 15px;
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="wrapper">
+        <!-- Left Sidebar Navigation -->
+        <nav class="sidebar">
+            <div class="logo">
+                <div class="logo-icon">📄</div>
+                <div>
+                    <span>AskDoc</span>
+                    <span class="logo-text">AI document reviewer</span>
+                </div>
+            </div>
+            <button class="upload-button" type="button" onclick="document.getElementById('fileInput').click()">
+                + New Document
+            </button>
+            <input id="fileInput" type="file" accept=".pdf,.txt,.csv,.html" style="display:none" onchange="onFileSelect(event)">
+
+            <div class="recent-documents">
+                <h3 style="display:none">Recent Documents</h3>
+            </div>
+        </nav>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <div class="page-header">
+                <h2 id="mainTitle">Welcome to AskDoc</h2>
+                <p id="mainSubtitle">Your AI document reviewer is ready. Upload a file to begin.</p>
+                <div class="selected-file" id="selectedFileName" style="display:none;"></div>
+            </div>
+            
+            <div class="chat-body">
+                <div id="chatAreaSection" style="display: none;">
+                    <div class="chat-area">
+                        <div class="messages">
+                            <div class="message message-assistant">
+                                Hi! How can I help you with this document?
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="composerSection" style="display: none;">
+                    <div class="composer">
+                        <input id="chatInput" type="text" placeholder="Ask anything about this document..." aria-label="Chat input">
+                        <button type="button" onclick="ask()">➤</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const chatInput = document.getElementById('chatInput');
+        const messagesContainer = document.querySelector('.messages');
+        const selectedFileName = document.getElementById('selectedFileName');
+        const mainSubtitle = document.getElementById('mainSubtitle');
+        const chatAreaSection = document.getElementById('chatAreaSection');
+        const composerSection = document.getElementById('composerSection');
+        const recentDocuments = document.querySelector('.recent-documents');
+
+        let currentSessionId = null;
+        const sessions = {
+            employment_agreement: {
+                fileName: 'Employment Agreement.pdf',
+                messages: [
+                    { role: 'assistant', text: 'Hi! How can I help you with this document?' }
+                ]
+            }
+        };
+
+        function normalizeSessionId(name) {
+            return name.toLowerCase().replace(/[^a-z0-9]+/g, '_');
+        }
+
+        function setActiveRecent(sessionId) {
+            document.querySelectorAll('.recent-item').forEach(item => {
+                item.classList.toggle('active', item.dataset.sessionId === sessionId);
+            });
+        }
+
+        function addRecentDocument(sessionId, fileName, label = 'Just now') {
+            const header = recentDocuments.querySelector('h3');
+            header.style.display = 'block';
+            const insertAfter = header.nextSibling || null;
+
+            const existingItem = document.querySelector(`[data-session-id="${sessionId}"]`);
+            if (existingItem) {
+                recentDocuments.insertBefore(existingItem, insertAfter);
+                return;
+            }
+
+            const item = document.createElement('a');
+            item.href = '#';
+            item.className = 'recent-item';
+            item.dataset.sessionId = sessionId;
+            item.dataset.fileName = fileName;
+            item.innerHTML = `
+                <span class="doc-icon">📄</span>
+                <div class="doc-info">
+                    <strong>${fileName}</strong>
+                    <span>${label}</span>
+                </div>
+            `;
+            item.addEventListener('click', event => {
+                event.preventDefault();
+                selectSession(sessionId);
+            });
+            recentDocuments.insertBefore(item, insertAfter);
+        }
+
+        function renderMessages(messages) {
+            messagesContainer.innerHTML = '';
+            messages.forEach(message => appendMessage(message.role, message.text, false));
+        }
+
+        function selectSession(sessionId) {
+            const session = sessions[sessionId];
+            if (!session) return;
+
+            currentSessionId = sessionId;
+            selectedFileName.textContent = session.fileName;
+            mainSubtitle.textContent = `${session.fileName} is selected.`;
+            setActiveRecent(sessionId);
+            renderMessages(session.messages);
+            chatAreaSection.style.display = 'block';
+            composerSection.style.display = 'block';
+        }
+
+        async function onFileSelect(event) {
+            const file = event.target.files[0];
+            if (!file) {
+                mainSubtitle.textContent = 'Your AI document reviewer is ready. Upload a file to begin.';
+                selectedFileName.style.display = 'none';
+                selectedFileName.textContent = '';
+                chatAreaSection.style.display = 'none';
+                composerSection.style.display = 'none';
+                return;
+            }
+
+            const fileName = file.name;
+            const sessionId = normalizeSessionId(fileName);
+
+            try {
+                await uploadDocument(file, sessionId);
+            } catch (error) {
+                console.error(error);
+                alert('Upload failed. Please try again.');
+                return;
+            }
+
+            if (!sessions[sessionId]) {
+                sessions[sessionId] = {
+                    fileName,
+                    messages: [
+                        { role: 'assistant', text: 'Hi! How can I help you with this document?' }
+                    ]
+                };
+                addRecentDocument(sessionId, fileName);
+            }
+
+            selectSession(sessionId);
+        }
+
+        async function uploadDocument(file, sessionId) {
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('session_id', sessionId);
+
+            const response = await fetch('/upload_document/', {
+                method: 'POST',
+                body: formData
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.error || 'Upload request failed');
+            }
+
+            return data;
+        }
+
+        const sendButton = document.querySelector('.composer button');
+        let loadingBubble = null;
+
+        async function ask() {
+            const question = chatInput.value.trim();
+            if (!question || !currentSessionId) {
+                return;
+            }
+
+            appendMessage('user', question);
+            chatInput.value = '';
+            scrollChatToBottom();
+            setLoadingState(true);
+            showLoadingBubble();
+
+            const formData = new FormData();
+            formData.append('question', question);
+            formData.append('session_id', currentSessionId);
+
+            try {
+                const response = await fetch('/chat/', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+                const answer = data.answer || 'No answer returned.';
+                removeLoadingBubble();
+                appendMessage('assistant', answer);
+            } catch (error) {
+                removeLoadingBubble();
+                appendMessage('assistant', 'Sorry, I could not get a response.');
+                console.error(error);
+            } finally {
+                setLoadingState(false);
+                scrollChatToBottom();
+            }
+        }
+
+        function appendMessage(role, text, save = true) {
+            const message = document.createElement('div');
+            message.className = `message message-${role}`;
+            message.textContent = text;
+            messagesContainer.appendChild(message);
+
+            if (save && currentSessionId) {
+                sessions[currentSessionId].messages.push({ role, text });
+            }
+        }
+
+        function showLoadingBubble() {
+            if (loadingBubble) return;
+            loadingBubble = document.createElement('div');
+            loadingBubble.className = 'message message-loading';
+            loadingBubble.innerHTML = 'Thinking<span class="loading-dots"><span></span><span></span><span></span></span>';
+            messagesContainer.appendChild(loadingBubble);
+            scrollChatToBottom();
+        }
+
+        function removeLoadingBubble() {
+            if (!loadingBubble) return;
+            loadingBubble.remove();
+            loadingBubble = null;
+        }
+
+        function setLoadingState(isLoading) {
+            chatInput.disabled = isLoading;
+            sendButton.disabled = isLoading;
+        }
+
+        function scrollChatToBottom() {
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        document.querySelectorAll('.recent-item').forEach(item => {
+            item.addEventListener('click', event => {
+                event.preventDefault();
+                const sessionId = item.dataset.sessionId;
+                if (sessionId) {
+                    selectSession(sessionId);
+                }
+            });
+        });
+
+        chatInput.addEventListener('keydown', event => {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                ask();
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,22 @@
+{% extends "RAG/base.html" %}
+
+{% block title %}Upload Documents - RAG{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h2>Upload a Document</h2>
+    <p>Choose a document to index for retrieval. After upload, use the chat page to ask questions from the document.</p>
+
+    {% if msg %}
+        <div class="status success">{{ msg }}</div>
+    {% endif %}
+
+    <form method="post" enctype="multipart/form-data" class="field-row">
+        {% csrf_token %}
+        <input type="file" name="file" required>
+        <button type="submit">Upload & Index</button>
+    </form>
+
+    <p class="hint">Supported file types depend on your backend ingest logic.</p>
+</div>
+{% endblock %}
